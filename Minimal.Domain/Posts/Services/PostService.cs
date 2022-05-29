@@ -7,15 +7,15 @@ namespace Minimal.Domain.Posts.Services
 {
     public interface IPostService
     {
-        PaginatedList<Post> GetPosts(int page, int limit);
+        ServiceResult<PaginatedList<PostDomain>> GetPosts(int page, int limit);
 
-        Post GetPost(Guid id);
+        ServiceResult<PostDomain> GetPost(Guid id);
 
-        void CreatePost(SavePostModel createPost);
+        ServiceResult CreatePost(SavePost createPost);
 
-        void AlterPost(SavePostModel alterPost);
+        ServiceResult AlterPost(SavePost alterPost);
 
-        void DeletePost(Guid id);
+        ServiceResult DeletePost(Guid id);
     }
 
     public class PostService : IPostService
@@ -27,37 +27,62 @@ namespace Minimal.Domain.Posts.Services
             _repository = repository;
         }
 
-        public PaginatedList<Post> GetPosts(int page, int limit)
+        public ServiceResult<PaginatedList<PostDomain>> GetPosts(int page, int limit)
         {
-            return _repository.GetPosts(page, limit);
+            var result = _repository.GetPosts(page, limit);
+
+            return new ValidResult<PaginatedList<PostDomain>>(result);
         }
 
-        public Post GetPost(Guid id)
+        public ServiceResult<PostDomain> GetPost(Guid id)
         {
-            return _repository.GetById(id);
+            var result = _repository.GetById(id);
+
+            return new ValidResult<PostDomain>(result);
         }
 
-        public void CreatePost(SavePostModel createPost)
+        public ServiceResult CreatePost(SavePost createPost)
         {
-            var post = new Post(createPost);
+            if(_repository.PostExists(createPost.Id))
+            {
+                return new InvalidResult("Post already exists");
+            }
+
+            var post = new PostDomain(createPost);
 
             _repository.Save(post);
+
+            return new ValidResult("Post created");
         }
 
-        public void AlterPost(SavePostModel alterPost)
+        public ServiceResult AlterPost(SavePost alterPost)
         {
             var post = _repository.GetById(alterPost.Id);
+
+            if(post == null)
+            {
+                return new InvalidResult("Post not found");
+            }
 
             post.AlterPost(alterPost);
 
             _repository.Update(post);
+
+            return new ValidResult("Post altered");
         }
 
-        public void DeletePost(Guid id)
+        public ServiceResult DeletePost(Guid id)
         {
             var post = _repository.GetById(id);
 
+            if (post == null)
+            {
+                return new InvalidResult("Post not found");
+            }
+
             _repository.Remove(post);
+
+            return new ValidResult("Post removed");
         }
     }
 }

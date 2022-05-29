@@ -1,7 +1,9 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using Minimal.API.Configurations.Extensions;
 using Minimal.Domain.Posts.Repositories;
 using Minimal.Domain.Posts.Services;
+using Minimal.Infrastructure.AutoMapper;
 using Minimal.Infrastructure.Persistence.Core.EntityFramework;
 using Minimal.Infrastructure.Persistence.Posts.Repositories;
 
@@ -14,6 +16,14 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<PostsContext>(
     options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+var mapperConfig = new MapperConfiguration(mc =>
+{
+    mc.AddProfile(new AutoMapperProfile());
+});
+
+IMapper mapper = mapperConfig.CreateMapper();
+builder.Services.AddSingleton(mapper);
 
 builder.Services.AddScoped<IPostService, PostService>();
 builder.Services.AddScoped<IPostRepository, PostRepository>();

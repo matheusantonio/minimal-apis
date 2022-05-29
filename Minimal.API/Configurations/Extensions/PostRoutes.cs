@@ -19,14 +19,14 @@ namespace Minimal.API.Configurations.Extensions
             })
             .WithName("GetPost");
 
-            app.MapPost("/post", (SavePostModel createPost, IPostService postService) =>
+            app.MapPost("/post", (SavePost createPost, IPostService postService) =>
             {
                 postService.CreatePost(createPost);
                 return Results.Ok();
             })
             .WithName("RegisterPost");
 
-            app.MapPut("/post", (SavePostModel alterPost, IPostService postService) =>
+            app.MapPut("/post", (SavePost alterPost, IPostService postService) =>
             {
                 postService.AlterPost(alterPost);
                 return Results.Ok();

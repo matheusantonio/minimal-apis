@@ -5,10 +5,12 @@ namespace Minimal.Domain.Posts.Repositories
 {
     public interface IPostRepository
     {
-        PaginatedList<Post> GetPosts(int page, int limit);
-        Post GetById(Guid id);
-        void Save(Post post);
-        void Update(Post post);
-        void Remove(Post post);
+        PaginatedList<PostDomain> GetPosts(int page, int limit);
+        PostDomain GetById(Guid id);
+
+        bool PostExists(Guid id);
+        void Save(PostDomain post);
+        void Update(PostDomain post);
+        void Remove(PostDomain post);
     }
 }

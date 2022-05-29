@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Minimal.Domain.Posts.Entities;
+using Minimal.Domain.Posts.Models;
 
 namespace Minimal.Infrastructure.Persistence.Core.EntityFramework
 {
